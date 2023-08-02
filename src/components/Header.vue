@@ -2,15 +2,30 @@
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { useBebidasStore } from "../stores/bedidas";
+import { useNotificacionStore } from "../stores/notificaciones";
 const store = useBebidasStore();
+const notificaciones = useNotificacionStore();
 const route = useRoute();
 const inicio = computed(() => {
   return route.name === "inicio";
 });
 
 const handleSumbit = () => {
-    store.obtenerRecetas()
-}
+  if (Object.values(store.busqueda).includes("")) {
+    notificaciones.error = true;
+    notificaciones.texto = "Todos los campos son Obligatorios";
+    notificaciones.mostrar = true;
+    setTimeout(() => {
+      notificaciones.$reset();
+    }, 2000);
+    return;
+  }
+
+  store.obtenerRecetas();
+  setTimeout(() => {
+    notificaciones.$reset();
+  }, 2000);
+};
 </script>
 
 <template>
@@ -72,7 +87,12 @@ const handleSumbit = () => {
             v-model="store.busqueda.categoria"
           >
             <option value="">--Seleccione--</option>
-            <option :value="categoria.strCategory" v-for="categoria in store.categorias">{{ categoria.strCategory }}</option>
+            <option
+              :value="categoria.strCategory"
+              v-for="categoria in store.categorias"
+            >
+              {{ categoria.strCategory }}
+            </option>
           </select>
         </div>
         <input

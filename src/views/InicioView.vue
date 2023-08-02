@@ -6,6 +6,8 @@ const bebidas = useBebidasStore();
 
 <template>
   <h1 class="text-6xl">Inicio</h1>
+  <p v-if="bebidas.noRecetas" class="font-bold text-orange-600 mt-3 text-center">No hay Recetas, utiliza el Formulario</p>
+
   <div
     class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-10 my-10"
   >

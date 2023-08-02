@@ -8,8 +8,27 @@ import {
 } from "@headlessui/vue";
 import { useModalStore } from "../stores/modal";
 import { useBebidasStore } from "../stores/bedidas";
+import {useFavoritosStore} from '../stores/favoritos';
 const modal = useModalStore();
 const bebidas = useBebidasStore();
+const favoritos = useFavoritosStore();
+
+const formatearIngredientes = () => {
+  const ingredientesDiv = document.createElement("DIV");
+
+  for (let i = 1; i < 15; i++) {
+    if (bebidas.bebida[`strIngredient${i}`]) {
+      const ingredientes = bebidas.bebida[`strIngredient${i}`];
+      const cantidad = bebidas.bebida[`strMeasure${i}`];
+
+      const ingredienteCantidad = document.createElement("P");
+      ingredienteCantidad.classList.add("text-lg");
+      ingredienteCantidad.textContent = `${ingredientes} - ${cantidad}`;
+      ingredientesDiv.appendChild(ingredienteCantidad);
+    }
+  }
+  return ingredientesDiv;
+};
 </script>
 
 <template>
@@ -46,18 +65,50 @@ const bebidas = useBebidasStore();
             >
               <div>
                 <div class="mt-3">
-                  <DialogTitle as="h3" class="text-gray-900 text-4xl font-extrabold my-5"> {{ bebidas.bebida.strDrink }}</DialogTitle>
-                  <img :src="bebidas.bebida.strDrinkThumb" :alt="'Imagen de '+ bebidas.bebida.strDrink">
+                  <DialogTitle
+                    as="h3"
+                    class="text-gray-900 text-4xl font-extrabold my-5"
+                  >
+                    {{ bebidas.bebida.strDrink }}</DialogTitle
+                  >
+                  <img
+                    :src="bebidas.bebida.strDrinkThumb"
+                    :alt="'Imagen de ' + bebidas.bebida.strDrink"
+                    class="mx-auto w-96"
+                  />
+                  <DialogTitle
+                    as="h3"
+                    class="text-gray-900 text-4xl font-extrabold my-5"
+                  >
+                    Ingredientes y Cantidades
+                  </DialogTitle>
+                  <div v-html="formatearIngredientes().outerHTML"></div>
+                  <DialogTitle
+                    as="h3"
+                    class="text-gray-900 text-4xl font-extrabold my-5"
+                  >
+                    Instrucciones
+                  </DialogTitle>
+                  <p class="text-sm font-bold">
+                    {{ bebidas.bebida.strInstructions }}
+                  </p>
                 </div>
               </div>
               <div class="mt-5 sm:mt-6 flex justify-between gap-4">
                 <button
                   type="button"
-                  class="w-full rounded bg-gray-600 font-bold uppercase text-white shadow hover:bg-gray-600"
+                  class="w-full rounded bg-gray-600 font-bold uppercase text-white shadow hover:bg-gray-800 py-2"
                   @click="modal.handleClickModal()"
                 >
                   Cerrar
                 </button>
+                <button
+                  type="button"
+                  class="w-full rounded bg-orange-600 font-bold uppercase text-white shadow hover:bg-orange-800 py-2"
+                  @click="favoritos.handleClickFavorito(bebidas.bebida.idDrink)"
+                >
+                {{modal.textoBoton ? 'Eliminar de Favoritos' : 'Agregar a Favoritos'}}
+              </button>
               </div>
             </DialogPanel>
           </TransitionChild>
